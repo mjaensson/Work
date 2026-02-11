@@ -1,5 +1,7 @@
+# Add regex for each application search for
+$ApplicationNameToFind = @('.*AdoptOpenJDK.*','.*Eclipse Temurin JDK.*')
 
-$ApplicationNameToFind = "*Citrix Workspace*"
+
 function Get-InstalledPrograms {
 
     [CmdletBinding()]
@@ -19,12 +21,12 @@ function Get-InstalledPrograms {
         'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*';
         'HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*';
     ) -ErrorAction 'SilentlyContinue' |
-    Where-Object -Property 'DisplayName' -Like $DisplayName |
+    Where-Object -Property 'DisplayName' -Match $DisplayName |
     Select-Object -Property 'DisplayName', 'UninstallString', 'ModifyPath' |
     Sort-Object -Property 'DisplayName'
 }
 
-$InstalledApp = Get-InstalledPrograms -DisplayName $ApplicationNameToFind
+$InstalledApp = Get-InstalledPrograms -DisplayName ($ApplicationNameToFind -join "|")
 
 if ([string]::IsNullOrEmpty($InstalledApp.DisplayName))
 {
